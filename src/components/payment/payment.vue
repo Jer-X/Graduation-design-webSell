@@ -1,7 +1,9 @@
 <template>
     <div class="payment">
         <div class="titleContent">
-            <div class="brand"><i class="icon-shop"></i></div>
+            <div class="brand">
+                <i class="icon-shop"></i>
+            </div>
             <div class="name">
                 <span class="total">{{foodList.length}}道菜</span>
                 <span class="set">您所在的桌位：{{desk}}</span>
@@ -15,7 +17,9 @@
         <split></split>
         <div class="message border-1px">
             <div class="text">给商家留言</div>
-            <div class="detail">口味、偏好等<i class="icon-keyboard_arrow_right"></i></div>
+            <div class="detail">口味、偏好等
+                <i class="icon-keyboard_arrow_right"></i>
+            </div>
         </div>
         <div class="payBtn" @click='payMoney()'>
             ￥{{totalPri}}立即下单
@@ -30,12 +34,17 @@
 import split from '../split/split';
 import { Toast, Indicator } from 'mint-ui';
 const ERR_OK = 0;
+import io from 'socket.io-client';
 
 export default {
     data() {
         return {
-            payState: 0
+            payState: 0,
+            socket: ''
         };
+    },
+    created() {
+        this.socket = io.connect('http://localhost:9000');
     },
     computed: {
         foodList() {
@@ -84,6 +93,7 @@ export default {
             }, { emulateJSON: true }).then((res) => {
                 res = res.body;
                 if (res.errno === ERR_OK) {
+                    this.socket.emit('add orders');
                     Indicator.close();
                     Toast({
                         message: '支付成功,请等待餐点送达',

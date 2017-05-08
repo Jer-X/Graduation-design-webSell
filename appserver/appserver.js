@@ -66,10 +66,10 @@ db.once('open', () => {
     console.log('connect to database: zzz')
 })
 
-let jsonObj = JSON.parse(fs.readFileSync('./ratings.json'))
-jsonObj.forEach(function(element) {
-    new model.ratings(element).save()
-}, this);
+// let jsonObj = JSON.parse(fs.readFileSync('./ratings.json'))
+// jsonObj.forEach(function(element) {
+//     new model.ratings(element).save()
+// }, this);
 // console.log(jsonObj)
 // new seller(jsonObj).save()
 // new model.goods(jsonObj[8]).save()
@@ -134,14 +134,14 @@ app.get('/data/ratings', function(req, res) {
 })
 
 app.get('/data/order', function(req, res) {
-    model.orders.find({}, function(err, orders) {
+    model.orders.find({}, function(err, order) {
         if (err) {
             return console.log(err)
         }
 
         res.json({
             'errno': code.success,
-            'data': orders
+            'data': order
         })
     })
 })
@@ -186,12 +186,12 @@ app.post('/data/user/login', (req, res) => {
         let validate = encrypt(tmp.pwd, tmp_user.key)
         if (validate === tmp_user.pwd) {
             req.session.sid = `${tmp_user.user_name},${tmp_user._id}`
-            console.log(req.session)
+                // console.log(req.session)
             res.json({
                 'errno': 0,
                 'data': {
-                    'user_name': user.user_name,
-                    'user_id': user._id
+                    'user_name': tmp_user.user_name,
+                    'user_id': tmp_user._id
                 }
             })
         } else {
@@ -220,7 +220,7 @@ app.post('/data/user/register', (req, res) => {
 //添加信息路由
 app.post('/data/order', function(req, res) {
     let item = req.body;
-    new model.order(item).save()
+    new model.orders(item).save()
     res.json({
         'errno': code.success
     })
